@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Picker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- CSV 파일 업로드 버튼 -->
+               <div class="upload-trigger-area">
+            <div class="upload-container">
+                <label class="upload-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    CSV 파일 업로드
+                    <input type="file" accept=".csv,.txt" id="fileInput" class="hidden">
+                </label>
+            </div>
+        </div>
+
+        <!-- 메인 선택 버튼 -->
+        <div class="picker-container">
+            <div class="picker-wrapper">
+                <button id="pickButton" class="picker-button">
+                    <div class="picker-content">
+                        <div class="item-prev"></div>
+                        <div class="item-current">시작하기</div>
+                        <div class="item-next"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- 통계 정보 -->
+        <div class="stats-container">
+            <p class="stats-text">남은 항목: <span id="remainingCount">150</span></p>
+            <p class="stats-text">선택된 항목: <span id="selectedCount">0</span></p>
+        </div>
+
+        <!-- 최근 선택된 항목 목록 -->
+        <div class="recent-container">
+            <h3 class="recent-title">최근 선택된 항목</h3>
+            <div class="recent-items" id="recentItems">
+                <!-- 최근 항목들이 여기에 동적으로 추가됨 -->
+            </div>
+        </div>
+
+        <!-- 리셋 버튼 -->
+        <button id="resetButton" class="reset-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 4v6h-6"></path>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            </svg>
+            초기화
+        </button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
