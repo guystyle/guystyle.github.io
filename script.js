@@ -17,13 +17,13 @@ class RandomPicker {
     }
 
     initializeElements() {
-        this.fileInput = document.getElementById('fileInput');
-        this.pickButton = document.getElementById('pickButton');
-        this.resetButton = document.getElementById('resetButton');
-        this.recentItems = document.getElementById('recentItems');
-        this.remainingCount = document.getElementById('remainingCount');
-        this.selectedCount = document.getElementById('selectedCount');
-        this.pickerContent = this.pickButton.querySelector('.picker-content');
+    this.fileInput = document.getElementById('fileInput');
+    this.pickButton = document.getElementById('pickButton');
+    this.resetButton = document.getElementById('resetButton');
+    this.recentItems = document.querySelector('.recent-items');  // ID 선택자 대신 클래스 선택자 사용
+    this.remainingCount = document.getElementById('remainingCount');
+    this.selectedCount = document.getElementById('selectedCount');
+    this.pickerContent = this.pickButton.querySelector('.picker-content');
     }
 
     attachEventListeners() {
@@ -156,17 +156,53 @@ class RandomPicker {
     }
 
     updateRecentItems() {
-        this.recentItems.innerHTML = this.removedItems
-            .slice(-3)
+    const recentItemsContainer = document.querySelector('.recent-items');
+    if (!recentItemsContainer) {
+        console.error('Recent items container not found');
+        return;
+    }
+
+    // 최근 선택된 항목이 있을 때만 내용 업데이트
+    if (this.removedItems.length > 0) {
+        recentItemsContainer.innerHTML = this.removedItems
+            .slice()
             .reverse()
-            .map(item => `
-                <div class="recent-item">${item.value}</div>
+            .map((item, index) => `
+                <div class="recent-item">
+                    ${item.value}
+                    <span class="recent-item-number">#${this.removedItems.length - index}</span>
+                </div>
             `)
             .join('');
+    } else {
+        // 선택된 항목이 없을 때 표시할 메시지
+        recentItemsContainer.innerHTML = `
+            <div class="recent-item">
+                선택된 항목이 없습니다
+            </div>
+        `;
     }
+
+    // 스크롤을 맨 위로 이동
+    recentItemsContainer.scrollTop = 0;
+  }
 }
 
 // 앱 초기화
 document.addEventListener('DOMContentLoaded', () => {
     new RandomPicker();
+});
+
+// 클릭 이벤트 처리 수정
+document.addEventListener('DOMContentLoaded', function() {
+    const recentTitle = document.querySelector('.recent-title');
+    const recentInner = document.querySelector('.recent-inner');
+    
+    if (recentTitle && recentInner) {
+        recentTitle.addEventListener('click', function() {
+            const isVisible = recentInner.style.display === 'block';
+            recentInner.style.display = isVisible ? 'none' : 'block';
+            this.classList.toggle('open');
+        });
+    }
 });
