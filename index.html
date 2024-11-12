@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Picker</title>
+    <title>🎲 Random Picker</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -29,7 +29,7 @@
                 <button id="pickButton" class="picker-button">
                     <div class="picker-content">
                         <div class="item-prev"></div>
-                        <div class="item-current">시작하기</div>
+                        <div class="item-current">🎰 오늘 내 이름은...</div>
                         <div class="item-next"></div>
                     </div>
                 </button>
@@ -38,15 +38,17 @@
 
         <!-- 통계 정보 -->
         <div class="stats-container">
-            <p class="stats-text">남은 항목: <span id="remainingCount">150</span></p>
-            <p class="stats-text">선택된 항목: <span id="selectedCount">0</span></p>
+            <p class="stats-text">📤 남은 닉네임: <span id="remainingCount">150</span></p>
+            <p class="stats-text">☑️ 선택된 닉네임: <span id="selectedCount">0</span></p>
         </div>
 
         <!-- 최근 선택된 항목 목록 -->
         <div class="recent-container">
-            <h3 class="recent-title">최근 선택된 항목</h3>
-            <div class="recent-items" id="recentItems">
+            <h3 class="recent-title">🔖 최근 선택된 닉네임</h3>
+            <div class="recent-inner">
+              <div class="recent-items">
                 <!-- 최근 항목들이 여기에 동적으로 추가됨 -->
+              </div>
             </div>
         </div>
 
@@ -59,6 +61,7 @@
             초기화
         </button>
     </div>
-    <script src="script.js"></script>
+    <script src="script.js"></script>  
 </body>
 </html>
+
