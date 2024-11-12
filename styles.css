@@ -148,30 +148,114 @@ body {
 .recent-container {
     width: 100%;
     max-width: 28rem;
+    margin-top: 2rem;
+    background: transparent; /* 컨테이너 배경은 투명하게 */
 }
+
+.recent-inner {
+    margin-top: 0.5rem;
+    display:none;
+}
+
 
 .recent-title {
     color: #db2777;
-    margin-bottom: 0.5rem;
+    padding: 0.75rem 1rem;
+    margin: 0;
+    cursor: pointer;
+    user-select: none;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #111827;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    padding-right: 2rem; /* 화살표를 위한 공간 */
+}
+
+.recent-title:hover {
+    opacity: 0.8;
+}
+
+.recent-title::after {
+    content: "▼";
+    position: absolute;
+    right: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.recent-title.open::after {
+    transform: rotate(180deg);
 }
 
 .recent-items {
+    display: block;
     background-color: #111827;
-    padding: 1rem;
     border-radius: 0.5rem;
-    height: 8rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0; /* 상하 패딩 추가 */
+    max-height: 7rem;
     overflow-y: auto;
 }
 
 .recent-item {
     color: #d1d5db;
-    padding: 0.5rem 0;
+    padding: 0.75rem 1rem;
     border-bottom: 1px solid #1f2937;
+    font-size: 0.875rem;
+    line-height: 1.25;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.recent-item:first-child {
+    background-color: #1f2937;
+    border-left: 2px solid #db2777;
+}
+
+.recent-item-number {
+    color: #6b7280;
+    font-size: 0.75rem;
 }
 
 .recent-item:last-child {
     border-bottom: none;
 }
+
+/* 스크롤바 스타일 */
+.recent-items::-webkit-scrollbar {
+    width: 4px;
+}
+
+.recent-items::-webkit-scrollbar-track {
+    background: #1f2937;
+    margin: 0.5rem 0; /* 스크롤바 트랙 여백 */
+}
+
+.recent-items::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 2px;
+}
+
+.recent-items::-webkit-scrollbar-thumb:hover {
+    background: #4b5563;
+}
+
+.recent-item {
+    color: #d1d5db;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #1f2937;
+    font-size: 0.875rem;
+    line-height: 1.25;
+}
+
+.recent-item:last-child {
+    border-bottom: none;
+}
+
 
 /* 리셋 버튼 스타일 */
 .reset-button {
