@@ -94,7 +94,7 @@ class RandomPicker {
             `;
         } else {
             content.innerHTML = `
-                <div class="item-current">시작하기</div>
+                <div class="item-current">🎰 오늘 내 이름은...</div>
             `;
         }
     }
