@@ -13,7 +13,7 @@ class RandomPicker {
         
     async loadInitialData() {
         try {
-            const response = await fetch('djnames.csv');
+            const response = await fetch('/djnames.csv');
             const text = await response.text();
             const rows = text.split('\n');
             this.items = rows
