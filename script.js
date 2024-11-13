@@ -6,7 +6,31 @@ class RandomPicker {
 
         this.initializeElements();
         this.attachEventListeners();
+        // loadInitialData 추가
+        this.loadInitialData();
         this.updateCounts();
+    }
+        
+    async loadInitialData() {
+        try {
+            const response = await fetch('djnames.csv');
+            const text = await response.text();
+            const rows = text.split('\n');
+            this.items = rows
+                .filter(row => row.trim() !== '')
+                .map((row, index) => ({
+                    id: index + 1,
+                    value: row.trim().replace(/"/g, '').replace(/,.*$/, '')
+                }));
+        } catch (error) {
+            console.error('Error loading initial data:', error);
+            this.generateInitialData();
+        }
+
+        this.removedItems = [];
+        this.updateDisplay();
+        this.updateCounts();
+        this.updateRecentItems();
     }
 
     generateInitialData() {
