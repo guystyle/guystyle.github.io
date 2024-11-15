@@ -39,8 +39,9 @@ class RandomPicker {
     // localStorage에서 상태 불러오기
     loadStateFromStorage() {
         try {
-            const savedState = localStorage.getItem('randomPickerState');
-            return savedState ? JSON.parse(savedState) : null;
+            // savedState 변수명을 다르게 변경
+            const storedData = localStorage.getItem('randomPickerState');
+            return storedData ? JSON.parse(storedData) : null;
         } catch (error) {
             console.error('상태 복원 중 오류:', error);
             return null;
