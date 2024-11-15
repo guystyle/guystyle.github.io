@@ -1,20 +1,20 @@
 class RandomPicker {
     constructor() {
-         // localStorage에서 상태 복원 시도
+        this.isSpinning = false;
+        this.initializeElements();
+        this.attachEventListeners();
+        
+        // 저장된 상태가 있으면 복원, 없으면 초기 데이터 로드
         const savedState = this.loadStateFromStorage();
         if (savedState) {
             this.items = savedState.items;
             this.removedItems = savedState.removedItems;
+            this.updateDisplay();
+            this.updateCounts();
+            this.updateRecentItems();
         } else {
-            this.items = this.generateInitialData();
-            this.removedItems = [];
+            this.loadInitialData();
         }
-        
-        this.isSpinning = false;
-        this.initializeElements();
-        this.attachEventListeners();
-        this.loadInitialData();
-        this.updateCounts();
     }
 
     // localStorage에 상태 저장
@@ -61,7 +61,7 @@ class RandomPicker {
         this.updateDisplay();
         this.updateCounts();
         this.updateRecentItems();
-        this.saveStateToCookie(); // 초기 상태 저장
+        this.saveStateToStorage(); // 초기 상태 저장
     }
 
     generateInitialData() {
@@ -104,7 +104,7 @@ class RandomPicker {
                 this.updateDisplay();
                 this.updateCounts();
                 this.updateRecentItems();
-                this.saveStateToCookie(); // 파일 업로드 후 상태 저장
+                this.saveStateToStorage(); // 파일 업로드 후 상태 저장
             } catch (error) {
                 console.error('파일 처리 중 오류 발생:', error);
                 alert('파일을 처리하는 중 오류가 발생했습니다.');
