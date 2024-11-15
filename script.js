@@ -1,7 +1,7 @@
 class RandomPicker {
     constructor() {
-        // 저장된 상태 복원 시도
-        const savedState = this.loadStateFromCookie();
+         // localStorage에서 상태 복원 시도
+        const savedState = this.loadStateFromStorage();
         if (savedState) {
             this.items = savedState.items;
             this.removedItems = savedState.removedItems;
@@ -17,32 +17,28 @@ class RandomPicker {
         this.updateCounts();
     }
 
-    // 쿠키에 상태 저장
-    saveStateToCookie() {
+    // localStorage에 상태 저장
+    saveStateToStorage() {
         const state = {
             items: this.items,
             removedItems: this.removedItems
         };
-        const stateStr = JSON.stringify(state);
-        const date = new Date();
-        date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7일 유지
-        document.cookie = `randomPickerState=${encodeURIComponent(stateStr)};expires=${date.toUTCString()};path=/`;
+        try {
+            localStorage.setItem('randomPickerState', JSON.stringify(state));
+        } catch (error) {
+            console.error('상태 저장 중 오류:', error);
+        }
     }
 
-    // 쿠키에서 상태 불러오기
-    loadStateFromCookie() {
-        const cookies = document.cookie.split(';');
-        const stateCookie = cookies.find(cookie => cookie.trim().startsWith('randomPickerState='));
-        if (stateCookie) {
-            try {
-                const stateStr = decodeURIComponent(stateCookie.split('=')[1]);
-                return JSON.parse(stateStr);
-            } catch (error) {
-                console.error('쿠키 상태 복원 중 오류:', error);
-                return null;
-            }
+    // localStorage에서 상태 불러오기
+    loadStateFromStorage() {
+        try {
+            const savedState = localStorage.getItem('randomPickerState');
+            return savedState ? JSON.parse(savedState) : null;
+        } catch (error) {
+            console.error('상태 복원 중 오류:', error);
+            return null;
         }
-        return null;
     }
         
     async loadInitialData() {
@@ -195,7 +191,7 @@ class RandomPicker {
         this.updateCounts();
         this.updateRecentItems();
         this.updateDisplay([null, selectedItem, null]);
-        this.saveStateToCookie(); // 선택 완료 후 상태 저장
+        this.saveStateToStorage(); // 쿠키 대신 localStorage 사용
     }
 
     resetItems() {
@@ -205,7 +201,7 @@ class RandomPicker {
         this.updateDisplay();
         this.updateCounts();
         this.updateRecentItems();
-        this.saveStateToCookie(); // 리셋 후 상태 저장
+        this.saveStateToStorage(); // 쿠키 대신 localStorage 사용
     }
 
     updateCounts() {
