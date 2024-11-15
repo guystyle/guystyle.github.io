@@ -1,14 +1,48 @@
 class RandomPicker {
     constructor() {
-        this.items = this.generateInitialData();
-        this.removedItems = [];
+        // 저장된 상태 복원 시도
+        const savedState = this.loadStateFromCookie();
+        if (savedState) {
+            this.items = savedState.items;
+            this.removedItems = savedState.removedItems;
+        } else {
+            this.items = this.generateInitialData();
+            this.removedItems = [];
+        }
+        
         this.isSpinning = false;
-
         this.initializeElements();
         this.attachEventListeners();
-        // loadInitialData 추가
         this.loadInitialData();
         this.updateCounts();
+    }
+
+    // 쿠키에 상태 저장
+    saveStateToCookie() {
+        const state = {
+            items: this.items,
+            removedItems: this.removedItems
+        };
+        const stateStr = JSON.stringify(state);
+        const date = new Date();
+        date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7일 유지
+        document.cookie = `randomPickerState=${encodeURIComponent(stateStr)};expires=${date.toUTCString()};path=/`;
+    }
+
+    // 쿠키에서 상태 불러오기
+    loadStateFromCookie() {
+        const cookies = document.cookie.split(';');
+        const stateCookie = cookies.find(cookie => cookie.trim().startsWith('randomPickerState='));
+        if (stateCookie) {
+            try {
+                const stateStr = decodeURIComponent(stateCookie.split('=')[1]);
+                return JSON.parse(stateStr);
+            } catch (error) {
+                console.error('쿠키 상태 복원 중 오류:', error);
+                return null;
+            }
+        }
+        return null;
     }
         
     async loadInitialData() {
@@ -23,14 +57,15 @@ class RandomPicker {
                     value: row.trim().replace(/"/g, '').replace(/,.*$/, '')
                 }));
         } catch (error) {
-            console.error('Error loading initial data:', error);
-            this.generateInitialData();
+            console.error('초기 데이터 로드 중 오류:', error);
+            this.items = this.generateInitialData();
         }
 
         this.removedItems = [];
         this.updateDisplay();
         this.updateCounts();
         this.updateRecentItems();
+        this.saveStateToCookie(); // 초기 상태 저장
     }
 
     generateInitialData() {
@@ -41,13 +76,13 @@ class RandomPicker {
     }
 
     initializeElements() {
-    this.fileInput = document.getElementById('fileInput');
-    this.pickButton = document.getElementById('pickButton');
-    this.resetButton = document.getElementById('resetButton');
-    this.recentItems = document.querySelector('.recent-items');  // ID 선택자 대신 클래스 선택자 사용
-    this.remainingCount = document.getElementById('remainingCount');
-    this.selectedCount = document.getElementById('selectedCount');
-    this.pickerContent = this.pickButton.querySelector('.picker-content');
+        this.fileInput = document.getElementById('fileInput');
+        this.pickButton = document.getElementById('pickButton');
+        this.resetButton = document.getElementById('resetButton');
+        this.recentItems = document.querySelector('.recent-items');
+        this.remainingCount = document.getElementById('remainingCount');
+        this.selectedCount = document.getElementById('selectedCount');
+        this.pickerContent = this.pickButton.querySelector('.picker-content');
     }
 
     attachEventListeners() {
@@ -73,6 +108,7 @@ class RandomPicker {
                 this.updateDisplay();
                 this.updateCounts();
                 this.updateRecentItems();
+                this.saveStateToCookie(); // 파일 업로드 후 상태 저장
             } catch (error) {
                 console.error('파일 처리 중 오류 발생:', error);
                 alert('파일을 처리하는 중 오류가 발생했습니다.');
@@ -131,7 +167,6 @@ class RandomPicker {
             return;
         }
 
-        // 이전 선택 상태 제거
         this.pickButton.classList.remove('selected');
         this.isSpinning = true;
         this.pickButton.classList.add('spinning');
@@ -150,8 +185,6 @@ class RandomPicker {
         
         this.isSpinning = false;
         this.pickButton.classList.remove('spinning');
-        
-        // 선택 완료 상태 추가
         this.pickButton.classList.add('selected');
         this.pickButton.classList.add('bounce');
         
@@ -162,16 +195,17 @@ class RandomPicker {
         this.updateCounts();
         this.updateRecentItems();
         this.updateDisplay([null, selectedItem, null]);
+        this.saveStateToCookie(); // 선택 완료 후 상태 저장
     }
-
 
     resetItems() {
         this.items = [...this.items, ...this.removedItems];
         this.removedItems = [];
-        this.pickButton.classList.remove('selected'); // 리셋 시 선택 상태 제거
+        this.pickButton.classList.remove('selected');
         this.updateDisplay();
         this.updateCounts();
         this.updateRecentItems();
+        this.saveStateToCookie(); // 리셋 후 상태 저장
     }
 
     updateCounts() {
@@ -180,36 +214,33 @@ class RandomPicker {
     }
 
     updateRecentItems() {
-    const recentItemsContainer = document.querySelector('.recent-items');
-    if (!recentItemsContainer) {
-        console.error('Recent items container not found');
-        return;
-    }
+        const recentItemsContainer = document.querySelector('.recent-items');
+        if (!recentItemsContainer) {
+            console.error('Recent items container not found');
+            return;
+        }
 
-    // 최근 선택된 항목이 있을 때만 내용 업데이트
-    if (this.removedItems.length > 0) {
-        recentItemsContainer.innerHTML = this.removedItems
-            .slice()
-            .reverse()
-            .map((item, index) => `
+        if (this.removedItems.length > 0) {
+            recentItemsContainer.innerHTML = this.removedItems
+                .slice()
+                .reverse()
+                .map((item, index) => `
+                    <div class="recent-item">
+                        ${item.value}
+                        <span class="recent-item-number">#${this.removedItems.length - index}</span>
+                    </div>
+                `)
+                .join('');
+        } else {
+            recentItemsContainer.innerHTML = `
                 <div class="recent-item">
-                    ${item.value}
-                    <span class="recent-item-number">#${this.removedItems.length - index}</span>
+                    선택된 항목이 없습니다
                 </div>
-            `)
-            .join('');
-    } else {
-        // 선택된 항목이 없을 때 표시할 메시지
-        recentItemsContainer.innerHTML = `
-            <div class="recent-item">
-                선택된 항목이 없습니다
-            </div>
-        `;
-    }
+            `;
+        }
 
-    // 스크롤을 맨 위로 이동
-    recentItemsContainer.scrollTop = 0;
-  }
+        recentItemsContainer.scrollTop = 0;
+    }
 }
 
 // 앱 초기화
@@ -217,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
     new RandomPicker();
 });
 
-// 클릭 이벤트 처리 수정
+// 클릭 이벤트 처리
 document.addEventListener('DOMContentLoaded', function() {
     const recentTitle = document.querySelector('.recent-title');
     const recentInner = document.querySelector('.recent-inner');
