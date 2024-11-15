@@ -1,18 +1,25 @@
 class RandomPicker {
     constructor() {
+        console.log('Constructor called');
         this.isSpinning = false;
         this.initializeElements();
         this.attachEventListeners();
+
+        // 저장된 상태 확인을 위한 로그
+        const savedState = this.loadStateFromStorage();
+        console.log('Saved state:', savedState);
         
         // 저장된 상태가 있으면 복원, 없으면 초기 데이터 로드
         const savedState = this.loadStateFromStorage();
         if (savedState) {
+            console.log('Restoring saved state');
             this.items = savedState.items;
             this.removedItems = savedState.removedItems;
             this.updateDisplay();
             this.updateCounts();
             this.updateRecentItems();
         } else {
+            console.log('Loading initial data');
             this.loadInitialData();
         }
     }
@@ -25,6 +32,7 @@ class RandomPicker {
         };
         try {
             localStorage.setItem('randomPickerState', JSON.stringify(state));
+            console.log('State saved:', state); // 저장 확인
         } catch (error) {
             console.error('상태 저장 중 오류:', error);
         }
@@ -191,7 +199,12 @@ class RandomPicker {
         this.updateCounts();
         this.updateRecentItems();
         this.updateDisplay([null, selectedItem, null]);
-        this.saveStateToStorage(); // 쿠키 대신 localStorage 사용
+        // 상태 저장 및 확인
+        this.saveStateToStorage();
+        console.log('Current state after selection:', {
+            items: this.items,
+            removedItems: this.removedItems
+        });
     }
 
     resetItems() {
