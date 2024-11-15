@@ -8,9 +8,7 @@ class RandomPicker {
         // 저장된 상태 확인을 위한 로그
         const savedState = this.loadStateFromStorage();
         console.log('Saved state:', savedState);
-        
-        // 저장된 상태가 있으면 복원, 없으면 초기 데이터 로드
-        const savedState = this.loadStateFromStorage();
+    
         if (savedState) {
             console.log('Restoring saved state');
             this.items = savedState.items;
